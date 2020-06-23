@@ -1238,11 +1238,13 @@ static const CGFloat kTOCropViewControllerToolbarHeight = 44.0f;
     if (@available(iOS 11.0, *)) {
         statusBarHeight = self.view.safeAreaInsets.top;
 
-        // On non-Face ID devices, always disregard the top inset
-        // unless we explicitly set the status bar to be visible.
-        if (self.statusBarHidden &&
-            self.view.safeAreaInsets.bottom <= FLT_EPSILON)
-        {
+        // We have a curious case here where we want to disregard
+        // any top insets that have been caused by screen content (eg the status bar),
+        // but preserve any insets caused due to actual hardware (eg a notch on iPhone X).
+
+        // For now, the only way to identify these specific devices is to recognize
+        // the size of the inset.
+        if (self.statusBarHidden && statusBarHeight < 40.0f) {
             statusBarHeight = 0.0f;
         }
     }
